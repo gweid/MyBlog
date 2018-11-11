@@ -1,0 +1,129 @@
+<!--基模板-->
+{% from 'bootstrap/nav.html' import render_nav_item %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>{% block title %}{% endblock %} - Blog</title>
+        <link rel="icon" href="{{ url_for('static',filename='favicon.ico') }}">
+        <link rel="stylesheet" type='text/css'
+              href="{{ url_for('static',filename='css/%s.min.css' % request.cookies.get('theme','charming')) }}">
+        <link rel="stylesheet" type='text/css' href="{{ url_for('static',filename='css/style.css') }}">
+    {% endblock %}
+</head>
+<body>
+{% block header %}
+    <div class="page-header text-center head_title">
+        <div class="row">
+            <img src="/static/header_img.jpg" class="rounded offset-md-4">
+            <div class="ml-3">
+                <h1 class="display-3">{{ admin.blog_title|default('Blog Title') }}</h1>
+                <h4 class="text-muted">&nbsp;{{ admin.blog_sub_title|default('Blog Subtitle') }}</h4>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block nav %}
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('blog.index') }}">博客</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarColor01">
+                <ul class="navbar-nav mr-auto">
+                    {{ render_nav_item('blog.index','主页') }}  <!--render_nav_item是用来显示链接激活状态的-->
+                    {{ render_nav_item('blog.about','关于') }}
+                </ul>
+
+                <form class="form-inline">
+                    <input type="search" class="form-control" placeholder="找找有啥好东西...">
+                    <button class="btn btn-dark">搜索</button>
+                </form>
+
+                <ul class="nav navbar-nav navbar-right">
+                    {% if  current_user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                                新建 <span class="caret"></span>
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="{{ url_for('admin.new_post') }}">文章</a>
+                                <a class="dropdown-item" href="{{ url_for('admin.new_category') }}">分类</a>
+                                <a class="dropdown-item" href="{{ url_for('admin.new_link') }}">分享</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                                管理 <span class="caret"></span>
+                                {% if unread_comments %}
+                                    <span class="badge badge-success">new</span>
+                                {% endif %}
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="{{ url_for('admin.manage_post') }}">文章</a>
+                                <a class="dropdown-item" href="{{ url_for('admin.manage_category') }}">分类</a>
+                                <a class="dropdown-item" href="{{ url_for('admin.manage_comment') }}">
+                                    评论
+                                    {% if unread_comments %}
+                                        <span class="badge badge-success">{{ unread_comments }}</span>
+                                    {% endif %}
+                                </a>
+                                <a class="dropdown-item" href="{{ url_for('admin.manage_link') }}">分享</a>
+                            </div>
+                        </li>
+                        {{ render_nav_item('admin.settings','设置') }}
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock nav %}
+
+<main class="container container01">
+    {% for message in get_flashed_messages(with_categories=True) %}
+        <div class="alert alert-{{ message[0] }}" role="alert">
+            <button class="close" type="button" data-dismiss="alert">&times;</button>
+            {{ message[1] }}
+        </div>
+    {% endfor %}
+
+    {% block content %}{% endblock %}
+
+    {% block footer %}
+        <footer>
+            <p class="float-left">
+                <small>&copy;2018 -
+                    <a href="{{ url_for('blog.index') }}">维度</a> - 基于Python Flask -
+                    <a href="https://github.com/gweid" title="博主的GitHub">GitHub</a>
+                </small>
+            </p>
+            <p class="float-right">
+                <small>
+                    {% if current_user.is_authenticated %}
+                    <!--如果用户已经登陆，下方显示“登出”链接-->
+                    <a href="{{ url_for('auth.logout',next=request.full_path) }}">登出</a>
+                    {% else %}
+                    <!--若果没有登陆，显示“登陆”按钮-->
+                    <a href="{{ url_for('auth.login',next=request.full_path) }}">登录</a>
+                    {% endif %}
+                </small>
+            </p>
+        </footer>
+    {% endblock footer %}
+</main>
+
+{% block script %}
+    <script type="text/javascript"
+            src="{{ url_for('static', filename='js/jquery-3.2.1.slim.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/script.js') }}"></script>
+    {{ moment.include_moment(local_js=url_for('static', filename='js/moment-with-locales.min.js')) }}
+    {{ moment.locale('zh-CN') }}
+{% endblock %}
+</body>
+</html>
