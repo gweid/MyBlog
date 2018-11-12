@@ -4,7 +4,7 @@
 ### 1、安装集成Virtualenv的pipenv 
 pip install pipenv 
 ### 2、进入文件夹
-cd myblog
+cd Myblog
 ### 3、为当前项目创建虚拟环境
 pipenv install --dev
 ### 4、激活虚拟环境
