@@ -14,7 +14,7 @@ pipenv shell
 flask forge
 ### 6、运行
 flask run
-## 默认生成的虚拟数据的虚拟管理员
+### 注：默认生成的虚拟数据的虚拟管理员
 管理员账号：super 密码：123456
 ## 当不需要虚拟数据测试时，可以直接生成干净的博客界面
 ### 1、激活虚拟环境
@@ -23,5 +23,5 @@ pipenv shell
 flask initdb --drop
 ### 3、创建管理员账号
 flask init
-### 运行
+### 4、运行
 flask run
