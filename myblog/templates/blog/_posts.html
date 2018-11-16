@@ -23,7 +23,7 @@
     <div class="tip">
         <h5>文章溜走了...</h5>
         {% if current_user.is_authenticated %}
-            <a href="{{ url_for(admin.new_post) }}">现在新建</a>
+            <a href="{{ url_for('admin.new_post') }}">现在新建</a>
         {% endif %}
     </div>
 {% endif %}
